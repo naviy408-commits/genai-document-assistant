@@ -179,11 +179,7 @@ Summarize the patient outcomes.
 | Net Income | $49,552M |
 | Total Assets | $3,875,393M |
 
-### Q&A with Citation
-Q: What is the net income?
-A: The net income for the year ended December 31, 2023
-is $49,552 million (Page 1)
-Source: Page 1 — Financial Highlights 2023
+
 ---
 
 ## 🔧 RAG Pipeline Details
