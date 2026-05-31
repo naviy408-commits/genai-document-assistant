@@ -160,18 +160,22 @@ http://localhost:8501
 ---
 
 ## 📸 Sample Questions
-
 ### Financial Documents
+```
 What was the total revenue in 2023?
 What is the net income?
 What are the main business risks?
 What is the earnings per share (EPS)?
 Summarize the financial highlights.
+```
+
 ### Healthcare Documents
+```
 What are the readmission rates?
 What quality metrics are reported?
 What are the key clinical guidelines?
 Summarize the patient outcomes.
+```
 ---
 
 ## 📈 Sample Output
@@ -183,11 +187,14 @@ Summarize the patient outcomes.
 | Net Income | 49,552 |
 | Total Assets | 3,875,393 |
 
-### Q&A with Citation
+```
 Q: What is the net income?
+
 A: The net income for the year ended December 31, 2023
-is $49,552 million (Page 1)
+   is $49,552 million (Page 1)
+
 Source: Page 1 — Financial Highlights 2023
+```
 ---
 
 ## 🔧 How RAG Works
@@ -202,7 +209,7 @@ Source: Page 1 — Financial Highlights 2023
 
 ---
 
-## 📦 Requirements
+```
 streamlit==1.32.0
 langchain==0.1.16
 langchain-community==0.0.34
@@ -218,6 +225,7 @@ pandas==2.2.2
 plotly==5.21.0
 python-dotenv==1.0.1
 torch==2.2.2
+```
 ---
 
 ## 🆓 Why Ollama + TinyLlama?
