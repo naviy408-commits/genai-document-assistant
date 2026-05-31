@@ -37,7 +37,7 @@ This project builds an end-to-end GenAI pipeline that:
 ---
 
 ## 🏗️ Architecture
-'''
+```
 PDF Upload
 ↓
 Text Extraction (pdfplumber + PyPDF2)
@@ -53,7 +53,7 @@ RAG Pipeline (LangChain + Groq LLaMA3)
 ┌─────────────────────────────────┐
 │  Q&A  │  KPI Extraction  │ Summary │
 └─────────────────────────────────┘
-'''
+```
 ---
 
 ## 🛠️ Tech Stack
@@ -72,7 +72,7 @@ RAG Pipeline (LangChain + Groq LLaMA3)
 ---
 
 ## 📁 Project Structure
-''
+```
 genai-document-assistant/
 │
 ├── app.py                    # Main Streamlit UI
@@ -86,7 +86,7 @@ genai-document-assistant/
 ├── vector_store.py       # FAISS vector store builder
 ├── rag_chain.py          # RAG chain with Groq
 └── kpi_extractor.py      # KPI extraction logic
-''
+```
 ---
 
 ## 🚀 How to Run
