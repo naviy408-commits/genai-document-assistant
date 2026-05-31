@@ -5,7 +5,7 @@ A RAG (Retrieval-Augmented Generation) powered document analysis system that pro
 ![Python](https://img.shields.io/badge/Python-3.10-blue)
 ![Streamlit](https://img.shields.io/badge/Streamlit-1.32-red)
 ![LangChain](https://img.shields.io/badge/LangChain-0.1.16-green)
-![Groq](https://img.shields.io/badge/Groq-LLaMA3-orange)
+![Ollama](https://img.shields.io/badge/Ollama-TinyLlama-orange)
 ![FAISS](https://img.shields.io/badge/FAISS-Vector_DB-purple)
 
 ---
@@ -16,7 +16,7 @@ This project builds an end-to-end GenAI pipeline that:
 - Accepts financial (JPMorgan, BofA) and healthcare (CMS, CDC) PDF documents
 - Chunks and embeds document text into a FAISS vector store
 - Uses RAG to answer natural language questions with page citations
-- Auto-extracts KPIs using regex + LLM
+- Auto-extracts KPIs using regex + Ollama LLM
 - Generates 3-paragraph executive summaries
 
 ---
@@ -31,12 +31,12 @@ This project builds an end-to-end GenAI pipeline that:
 | 📝 Summary Generation | Generate executive summaries instantly |
 | 🏥 Healthcare Support | Works with CMS/CDC clinical documents |
 | 💰 Financial Support | Works with annual reports and 10-K filings |
-| ⚡ Fast Responses | Powered by Groq API — answers in seconds |
-| 🆓 Free to Use | No OpenAI costs — uses Groq free tier |
+| 🦙 Local LLM | Powered by Ollama TinyLlama — runs on your machine |
+| 🆓 Free to Use | No API costs — fully local and free |
 
 ---
 
-## 🏗️ Architecture
+## 🏗️ RAG Architecture
 ```
 PDF Upload
 ↓
@@ -48,11 +48,11 @@ Embeddings (HuggingFace all-MiniLM-L6-v2)
 ↓
 Vector Store (FAISS)
 ↓
-RAG Pipeline (LangChain + Groq LLaMA3)
+RAG Pipeline (LangChain + Ollama TinyLlama)
 ↓
-┌─────────────────────────────────┐
+┌──────────────────────────────────┐
 │  Q&A  │  KPI Extraction  │ Summary │
-└─────────────────────────────────┘
+└──────────────────────────────────┘
 ```
 ---
 
@@ -61,12 +61,12 @@ RAG Pipeline (LangChain + Groq LLaMA3)
 | Component | Technology |
 |---|---|
 | **Frontend** | Streamlit |
-| **LLM** | Groq API (LLaMA3-8b) |
-| **Embeddings** | HuggingFace all-MiniLM-L6-v2 |
+| **LLM** | Ollama (TinyLlama) — runs locally |
+| **Embeddings** | HuggingFace all-MiniLM-L6-v2 — free, local |
 | **Vector DB** | FAISS |
 | **RAG Framework** | LangChain |
 | **PDF Parsing** | pdfplumber + PyPDF2 |
-| **KPI Extraction** | Regex + Groq LLM |
+| **KPI Extraction** | Regex + Ollama LLM |
 | **Language** | Python 3.10 |
 
 ---
@@ -75,17 +75,16 @@ RAG Pipeline (LangChain + Groq LLaMA3)
 ```
 genai-document-assistant/
 │
-├── app.py                    # Main Streamlit UI
-├── requirements.txt          # Python dependencies
-├── .env                      # API keys (not uploaded)
+├── app.py
+├── requirements.txt
 ├── README.md
 │
 └── utils/
 ├── init.py
-├── pdf_processor.py      # PDF text extraction
-├── vector_store.py       # FAISS vector store builder
-├── rag_chain.py          # RAG chain with Groq
-└── kpi_extractor.py      # KPI extraction logic
+├── pdf_processor.py
+├── vector_store.py
+├── rag_chain.py
+└── kpi_extractor.py
 ```
 ---
 
@@ -93,39 +92,44 @@ genai-document-assistant/
 
 ### Prerequisites
 - Python 3.10+
-- Groq API key (free at https://console.groq.com)
+- Ollama installed — free at https://ollama.com
+- No API keys needed
 
 ### Step 1 — Clone the repository
 ```bash
-git clone https://github.com/YourUsername/genai-document-assistant.git
+git clone https://github.com/naviy408-commits/genai-document-assistant.git
 cd genai-document-assistant
 ```
 
-### Step 2 — Create conda environment
+### Step 2 — Install Ollama and pull model
+```bash
+ollama pull tinyllama
+```
+
+### Step 3 — Start Ollama server
+```bash
+ollama serve
+```
+Keep this terminal open.
+
+### Step 4 — Create conda environment
 ```bash
 conda create -n genai-doc-env python=3.10
 conda activate genai-doc-env
 ```
 
-### Step 3 — Install dependencies
+### Step 5 — Install dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
-### Step 4 — Add API key
-Create a `.env` file in the root folder:
-'''
-GROQ_API_KEY=your_groq_api_key_here
-'''
-### Step 5 — Run the app
+### Step 6 — Run the app
 ```bash
 streamlit run app.py
 ```
 
-### Step 6 — Open in browser
-```
+### Step 7 — Open in browser
 http://localhost:8501
-```
 ---
 
 ## 📊 Supported Documents
@@ -175,44 +179,65 @@ Summarize the patient outcomes.
 ### KPIs Extracted
 | KPI | Value |
 |---|---|
-| Revenue | $158,104M |
-| Net Income | $49,552M |
-| Total Assets | $3,875,393M |
+| Revenue | 158,104 |
+| Net Income | 49,552 |
+| Total Assets | 3,875,393 |
 
-
+### Q&A with Citation
+Q: What is the net income?
+A: The net income for the year ended December 31, 2023
+is $49,552 million (Page 1)
+Source: Page 1 — Financial Highlights 2023
 ---
 
-## 🔧 RAG Pipeline Details
+## 🔧 How RAG Works
 
-1. **PDF Parsing** — pdfplumber extracts text page by page with metadata
+1. **PDF Parsing** — pdfplumber extracts text page by page
 2. **Chunking** — 800 char chunks with 150 char overlap
 3. **Embeddings** — HuggingFace MiniLM creates semantic vectors
 4. **FAISS Index** — stores vectors for similarity search
-5. **Retrieval** — top 3 relevant chunks retrieved per query
-6. **Generation** — Groq LLaMA3 generates answer from context
+5. **Retrieval** — top 3 relevant chunks per query
+6. **Generation** — Ollama TinyLlama generates answer from context
 7. **Citation** — page numbers returned with every answer
 
 ---
 
-## 🆓 Why Groq?
+## 📦 Requirements
+streamlit==1.32.0
+langchain==0.1.16
+langchain-community==0.0.34
+langchain-core==0.1.46
+langchain-text-splitters==0.0.1
+faiss-cpu==1.8.0
+pdfplumber==0.11.0
+PyPDF2==3.0.1
+sentence-transformers==2.7.0
+ollama==0.1.9
+tiktoken==0.7.0
+pandas==2.2.2
+plotly==5.21.0
+python-dotenv==1.0.1
+torch==2.2.2
+---
 
-- ✅ Free API tier available
-- ✅ Runs LLaMA3 model
-- ✅ 10x faster than local Ollama
-- ✅ No GPU required
-- ✅ No credit card needed
+## 🆓 Why Ollama + TinyLlama?
+
+- ✅ Completely free — no API costs
+- ✅ Runs 100% locally on your machine
+- ✅ No internet required after setup
+- ✅ No API key needed
+- ✅ Private — your documents never leave your computer
 
 ---
 
 ## 👩‍💻 Author
 
 **Navya Yalavarthi**
-- GitHub: [@navyayalavarthi](https://github.com/navyayalavarthi)
+- GitHub: [@naviy408-commits](https://github.com/naviy408-commits)
 - LinkedIn: [linkedin.com/in/navyayalavarthi](https://linkedin.com/in/navyayalavarthi)
 
 ---
 
 ## 📄 License
 
-This project is open source and available under the [MIT License](LICENSE).
-  
+This project is open source and available under the MIT License.
